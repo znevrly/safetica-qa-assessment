@@ -18,15 +18,15 @@ public class LogServiceIntegrationTests : IClassFixture<TestFixture>
     }
 
     [Fact]
-    public async Task AddLog_ShouldStoreLogInBlobStorage()
+    public async Task AddLog_ShouldStoreLogInStorage()
     {
         // Arrange
         var log = new Log(
             Guid.NewGuid(),
             DateTimeOffset.UtcNow,
-            "test@example.com",
-            new[] { "recipient@example.com" },
-            "Test Subject"
+            "znevrly@gmail.com",
+            new[] { "recipient@example.org" },
+            "Integration Test Subject"
         );
 
         // Act
@@ -43,26 +43,19 @@ public class LogServiceIntegrationTests : IClassFixture<TestFixture>
     public async Task GetLogs_ShouldReturnAllStoredLogs()
     {
         // Arrange
-        var logs = new[]
-        {
-            new Log(Guid.NewGuid(), DateTimeOffset.UtcNow, "test1@example.com", new[] { "recipient1@example.com" }, "Subject 1"),
-            new Log(Guid.NewGuid(), DateTimeOffset.UtcNow, "test2@example.com", new[] { "recipient2@example.com" }, "Subject 2")
-        };
+        var log1 = new Log(Guid.NewGuid(), DateTimeOffset.UtcNow, "test1@example.org", new[] { "recipient1@example.org" }, "Subject 1");
+        var log2 = new Log(Guid.NewGuid(), DateTimeOffset.UtcNow, "test2@example.org", new[] { "recipient2@example.org" }, "Subject 2");
 
-        foreach (var log in logs)
-        {
-            await _logService.AddLogAsync(log, CancellationToken.None);
-        }
+        await _logService.AddLogAsync(log1, CancellationToken.None);
+        await _logService.AddLogAsync(log2, CancellationToken.None);
 
         // Act
         var retrievedLogs = await _logService.GetLogsAsync(CancellationToken.None);
 
         // Assert
-        retrievedLogs.Should().HaveCountGreaterThanOrEqualTo(logs.Length);
-        foreach (var log in logs)
-        {
-            retrievedLogs.Should().Contain(l => l.Id == log.Id);
-        }
+        retrievedLogs.Should().HaveCountGreaterThanOrEqualTo(2);
+        retrievedLogs.Should().Contain(l => l.Id == log1.Id);
+        retrievedLogs.Should().Contain(l => l.Id == log2.Id);
     }
 
     [Fact]
@@ -72,9 +65,9 @@ public class LogServiceIntegrationTests : IClassFixture<TestFixture>
         var log = new Log(
             Guid.NewGuid(),
             DateTimeOffset.UtcNow,
-            "test@example.com",
-            new[] { "recipient@example.com" },
-            "Test Subject"
+            "znevrly@gmail.com",
+            new[] { "recipient@example.org" },
+            "Integration Test Subject"
         );
         await _logService.AddLogAsync(log, CancellationToken.None);
 
@@ -107,9 +100,9 @@ public class LogServiceIntegrationTests : IClassFixture<TestFixture>
         var log = new Log(
             Guid.NewGuid(),
             DateTimeOffset.UtcNow,
-            "test@example.com",
-            new[] { "recipient@example.com" },
-            "Test Subject"
+            "znevrly@gmail.com",
+            new[] { "recipient@example.org" },
+            "Integration Test Subject"
         );
         await _logService.AddLogAsync(log, CancellationToken.None);
 

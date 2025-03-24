@@ -14,18 +14,17 @@ public class TestFixture : IDisposable
     {
         var services = new ServiceCollection();
         
-        // Configure logging
         services.AddLogging(builder =>
         {
             builder.AddConsole();
             builder.SetMinimumLevel(LogLevel.Debug);
         });
 
-        // Add Log Service and its dependencies
         services.AddSingleton<BlobServiceClient>(_ => 
             new BlobServiceClient("UseDevelopmentStorage=true"));
-        services.AddSingleton<ILogStore, BlobLogStore>();
-        services.AddSingleton<ILogService, LogService.Services.LogService>();
+        
+        services.AddScoped<ILogStore, BlobLogStore>();
+        services.AddScoped<ILogService, LogService.Services.LogService>();
 
         Services = services.BuildServiceProvider();
     }
